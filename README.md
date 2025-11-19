@@ -1,0 +1,1 @@
+Servidor Tipster inicializado
