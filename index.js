@@ -33,7 +33,7 @@ function clamp01(x) {
 
 // API wrapper
 async function apiFootball(path, params = {}) {
-  const resp = await axios.get(${API_BASE}${path}, {
+  const resp = await axios.get(`${API_BASE}${path}`, {
     headers: {
       "x-apisports-key": API_KEY,
       "x-apisports-host": "v3.football.api-sports.io"
@@ -265,3 +265,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
   console.log("Servidor corriendo en puerto " + PORT)
 );
+
