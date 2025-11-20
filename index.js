@@ -44,7 +44,7 @@ app.get("/api/*", async (req, res) => {
   if (!API_KEY) return res.status(400).json({ ok: false, message: "API_KEY missing" });
   try {
     const path = req.params[0]; // everything after /api/
-    const resp = await axios.get(${API_BASE}/${path}, {
+    const resp = await axios.get(`${API_BASE}/${path}`, {
       headers: {
         "x-apisports-key": API_KEY,
         "x-apisports-host": "v3.football.api-sports.io"
@@ -338,3 +338,4 @@ app.get("/test", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
