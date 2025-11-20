@@ -17,10 +17,8 @@
 import express from "express";
 import axios from "axios";
 import cors from "cors";
-import helmet from "helmet";
 
 const app = express();
-app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
@@ -339,3 +337,4 @@ app.get("/test", (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
