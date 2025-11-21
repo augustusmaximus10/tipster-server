@@ -355,7 +355,7 @@ app.get("/team/:name", async (req, res) => {
     try {
         const teamName = req.params.name;
 
-        const url = https://api.sportmonks.com/v3/football/teams/search/${teamName}?api_token=${API_KEY};
+        const url = `https://api.sportmonks.com/v3/football/teams/search/${teamName}?api_token=${API_KEY}`;
 
         const response = await axios.get(url);
 
@@ -405,6 +405,7 @@ app.get("/test", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
 
 
 
