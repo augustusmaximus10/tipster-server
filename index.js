@@ -44,7 +44,10 @@ app.get("/api/*", async (req, res) => {
     const path = req.params[0]; // everything after /api/
     const resp = await axios.get(`${API_BASE}/${path}`, {
       headers: {},
-      params: { ...req.query, api.token: API_KEY }
+      params: { 
+        ...req.query,
+        api_token: API_KEY   // ← Sportmonks usa api_token
+      }
     });
     return res.json(resp.data);
   } catch (err) {
@@ -330,6 +333,7 @@ app.get("/test", (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
 
 
 
