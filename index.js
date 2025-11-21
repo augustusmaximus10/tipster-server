@@ -110,8 +110,18 @@ function calcTeamStats(fixtures, teamId) {
 
     const isHome = homeP?.id === teamId;
 
-    const homeGoals = score?.score?.home ?? score?.score?.goals_home ?? score?.score?.goals ?? 0;
-    const awayGoals = score?.score?.away ?? score?.score?.goals_away ?? 0;
+    const homeGoals =
+      score?.score?.localteam_score ??
+      score?.score?.goals_home ??
+      score?.score?.home ??
+      score?.score?.goals ??
+      0;
+
+    const awayGoals =
+      score?.score?.visitorteam_score ??
+      score?.score?.goals_away ??
+      score?.score?.away ??
+      0;
     
     const teamGoals = isHome ? homeGoals : awayGoals;
     const oppGoals = isHome ? awayGoals : homeGoals;
@@ -354,6 +364,7 @@ app.get("/test", (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
 
 
 
