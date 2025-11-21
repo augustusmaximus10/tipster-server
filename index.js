@@ -24,7 +24,7 @@ app.use(express.json());
 
 // Accept either API_KEY or API_FOOTBALL_KEY to be flexible
 const API_KEY = process.env.API_KEY || process.env.API_FOOTBALL_KEY || null;
-const API_BASE = "https://v3.football.api-sports.io";
+const API_BASE = "https://api.sportmonks.com/v3/football";
 
 // Basic check route
 app.get("/", (req, res) => {
@@ -43,11 +43,8 @@ app.get("/api/*", async (req, res) => {
   try {
     const path = req.params[0]; // everything after /api/
     const resp = await axios.get(`${API_BASE}/${path}`, {
-      headers: {
-        "x-apisports-key": API_KEY,
-        "x-apisports-host": "v3.football.api-sports.io"
-      },
-      params: req.query
+      headers: {},
+      params: { ...req.query, api.token: API_KEY }
     });
     return res.json(resp.data);
   } catch (err) {
@@ -337,4 +334,5 @@ app.get("/test", (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
 
