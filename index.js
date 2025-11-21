@@ -74,11 +74,7 @@ function clamp01(x) { return Math.max(0, Math.min(1, x)); }
 async function apiFootball(path, params = {}) {
   if (!API_KEY) throw new Error("API_KEY not set");
   const resp = await axios.get(`${API_BASE}${path}`, {
-    headers: {
-      "x-apisports-key": API_KEY,
-      "x-apisports-host": "v3.football.api-sports.io"
-    },
-    params
+    params: { ...params, api_token: API_KEY }
   });
   return resp.data;
 }
@@ -334,5 +330,6 @@ app.get("/test", (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
 
 
