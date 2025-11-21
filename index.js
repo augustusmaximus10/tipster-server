@@ -91,7 +91,7 @@ async function fetchLastMatches(teamId, league = null, season = null, last = 10)
   per_page: last,
   include: "participants;scores"
 });
-  return (data.response || []).filter(f => f.goals && f.goals.home !== null && f.goals.away !== null);
+  return data.data;
 }
 
 // ---------- Compute basic team stats (used by multiple predictors) ----------
@@ -336,6 +336,7 @@ app.get("/test", (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
 
 
 
