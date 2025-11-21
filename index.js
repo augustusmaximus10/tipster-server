@@ -255,9 +255,17 @@ function computeStatsFromFixtures(fixtures, teamId) {
   // similar to computeStats earlier but returns numeric stats used by mini predictor
   let wins = 0, draws = 0, losses = 0, goalsFor = 0, goalsAgainst = 0;
   fixtures.forEach(match => {
-    const isHome = match.teams.home.id === teamId;
-    const gf = isHome ? match.goals.home : match.goals.away;
-    const ga = isHome ? match.goals.away : match.goals.home;
+    const homeP = match.participants?.find(p => p.meta?.location === "home");
+    const awayP = match.participants?.find(p => p.meta?.location === "away");
+    const score = match.scores?.find(s => s.description === "CURRENT");
+
+    const isHome = homeP?.id === teamId;
+
+    const homeGoals = score?.score?.home ?? score?.score?.goals_home ?? score?.score?.goals ?? 0;
+    const awayGoals = score?.score?.away ?? score?.score?.goals_away ?? 0;
+
+    const gf = isHome ? homeGoals : awayGoals;
+    const ga = isHome ? awayGoals : homeGoals;
     goalsFor += gf; goalsAgainst += ga;
     if (gf > ga) wins++; else if (gf === ga) draws++; else losses++;
   });
@@ -345,6 +353,7 @@ app.get("/test", (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
 
 
 
