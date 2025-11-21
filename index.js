@@ -42,7 +42,7 @@ app.get("/api/*", async (req, res) => {
   if (!API_KEY) return res.status(400).json({ ok: false, message: "API_KEY missing" });
   try {
     const path = req.params[0]; // everything after /api/
-    const resp = await axios.get(`${API_BASE}/${path}`, {
+    const resp = await axios.get(${API_BASE}/${path.replace(/^\/+/, "")}, {
       headers: {},
       params: { 
         ...req.query,
@@ -76,7 +76,7 @@ function clamp01(x) { return Math.max(0, Math.min(1, x)); }
 // ---------- API wrapper (safe) ----------
 async function apiFootball(path, params = {}) {
   if (!API_KEY) throw new Error("API_KEY not set");
-  const resp = await axios.get(`${API_BASE}${path}`, {
+  const resp = await axios.get(`${API_BASE}${path.startsWith("/") ? path : "/" + path}`, {
     params: { ...params, api_token: API_KEY }
   });
   return resp.data;
@@ -88,11 +88,12 @@ async function fetchLastMatches(teamId, league = null, season = null, last = 10)
   if (league) params.league = league;
   if (season) params.season = season;
   const data = await apiFootball(`/fixtures`, {
-  filters: `team_id:${teamId}`,
+  filter: `team_id:${teamId}`,
   include: "scores;participants",
+  page: 1,
   per_page: last
 });
-return data.data || data.response || [];
+return data.data || [];
 }
 
 // ---------- Compute basic team stats (used by multiple predictors) ----------
@@ -353,6 +354,7 @@ app.get("/test", (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
 
 
 
