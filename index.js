@@ -87,7 +87,10 @@ async function fetchLastMatches(teamId, league = null, season = null, last = 10)
   const params = { team: teamId, last };
   if (league) params.league = league;
   if (season) params.season = season;
-  const data = await apiFootball("/fixtures", params);
+  const data = await apiFootball(`/teams/${teamId}/fixtures`, { 
+  per_page: last,
+  include: "participants;scores"
+});
   return (data.response || []).filter(f => f.goals && f.goals.home !== null && f.goals.away !== null);
 }
 
@@ -333,6 +336,7 @@ app.get("/test", (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
 
 
 
