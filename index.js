@@ -87,11 +87,12 @@ async function fetchLastMatches(teamId, league = null, season = null, last = 10)
   const params = { team: teamId, last };
   if (league) params.league = league;
   if (season) params.season = season;
-  const data = await apiFootball(`/teams/${teamId}/fixtures`, { 
-  per_page: last,
-  include: "participants;scores"
+  const data = await apiFootball(`/fixtures`, {
+  filters: `team_id:${teamId}`,
+  include: "scores;participants",
+  per_page: last
 });
-  return data.data;
+return data.data || data.response || [];
 }
 
 // ---------- Compute basic team stats (used by multiple predictors) ----------
@@ -102,9 +103,17 @@ function calcTeamStats(fixtures, teamId) {
   let gf_away = 0, ga_away = 0, cnt_away = 0;
 
   fixtures.forEach(f => {
-    const isHome = f.teams.home.id === teamId;
-    const teamGoals = isHome ? f.goals.home : f.goals.away;
-    const oppGoals = isHome ? f.goals.away : f.goals.home;
+    const homeP = f.participants?.find(p => p.meta?.location === "home");
+    const awayP = f.participants?.find(p => p.meta?.location === "away");
+    const score = f.scores?.find(s => s.description === "CURRENT");
+
+    const isHome = homeP?.id === teamId;
+
+    const homeGoals = score?.score?.home ?? score?.score?.goals_home ?? score?.score?.goals ?? 0;
+    const awayGoals = score?.score?.away ?? score?.score?.goals_away ?? 0;
+    
+    const teamGoals = isHome ? homeGoals : awayGoals;
+    const oppGoals = isHome ? awayGoals : homeGoals;
     played++;
     gf += teamGoals; ga += oppGoals;
     if (isHome) { cnt_home++; gf_home += teamGoals; ga_home += oppGoals; }
@@ -336,6 +345,7 @@ app.get("/test", (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
 
 
 
