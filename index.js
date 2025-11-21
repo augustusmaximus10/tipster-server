@@ -60,7 +60,7 @@ async function apiFootball(path, params = {}) {
   if (!API_KEY) throw new Error("API_KEY not set");
   const normalizedPath = path.startsWith("/") ? path : "/" + path;
   const mergedParams = { ...params, api_token: API_KEY };
-  const resp = await axios.get(${API_BASE}${normalizedPath}, { params: mergedParams, timeout: 15000 });
+  const resp = await axios.get(`${API_BASE}${normalizedPath}`, { params: mergedParams, timeout: 15000 });
   return resp.data;
 }
 
@@ -354,3 +354,4 @@ app.get("/test", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
