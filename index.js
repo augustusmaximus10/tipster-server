@@ -375,8 +375,8 @@ app.get("/team/:name", async (req, res) => {
       team: {
         id: team.id,
         name: team.name,
-        shortCode: team.short_code,
-        logo: team.image_path,
+        shortCode: team.short_code, || null,
+        logo: team.image_path, || null,
         country: team.country?.name || null,
         league: team.league?.name || null
       },
@@ -398,6 +398,7 @@ app.get("/test", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
 
 
 
