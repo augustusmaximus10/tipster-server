@@ -85,7 +85,7 @@ app.get("/api/*", async (req, res) => {
   try {
     const rawPath = req.params[0] || "";
     const path = normalizePathForProxy(rawPath);
-    const resp = await axios.get(${API_BASE}/${path}, {
+    const resp = await axios.get(`${API_BASE}/${path}`, {
       params: { ...req.query, api_token: API_KEY }
     });
     return res.json(resp.data);
@@ -102,7 +102,7 @@ app.get("/debug_match", async (req, res) => {
   try {
     const id = req.query.id;
     if (!id) return res.status(400).json({ ok: false, message: "use /debug_match?id=FIXTURE_ID" });
-    const data = await apiFootball(/fixtures/${id}, { include: "participants;scores" });
+    const data = await apiFootball(`/fixtures/${id}`, { include: "participants;scores" });
     return res.json({ ok: true, data });
   } catch (e) {
     return res.status(500).json({ ok: false, error: e.message, details: e.response?.data || null });
@@ -128,12 +128,12 @@ app.get("/match", async (req, res) => {
 
 async function fetchLastMatches(teamId, league = null, season = null, last = 10) {
   const params = {
-    filters: team_id:${teamId},
+    filters: `team_id:${teamId}`,
     include: "participants;scores",
     per_page: last
   };
-  if (league) params.filters += ;league_id:${league};
-  if (season) params.filters += ;season_id:${season};
+  if (league) params.filters += `;league_id:${league}`;
+  if (season) params.filters += `;season_id:${season}`;
   const data = await apiFootball("/fixtures", params);
   return data.data || [];
 }
@@ -354,4 +354,5 @@ app.get("/test", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
 
