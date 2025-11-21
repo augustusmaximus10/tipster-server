@@ -348,11 +348,61 @@ app.get("/predict_full", async (req, res) => {
   }
 });
 
+// ------------------------------------------------------
+// /team/:name — Buscar equipo por nombre y devolver info
+// ------------------------------------------------------
+app.get("/team/:name", async (req, res) => {
+  try {
+    const name = req.params.name;
+
+    // 1. Buscar equipos por nombre
+    const search = await apiFootball(/teams/search/${name}, {
+      include: "country;league"
+    });
+
+    if (!search.data || search.data.length === 0) {
+      return res.status(404).json({
+        ok: false,
+        message: No se encontró ningún equipo con el nombre: ${name}
+      });
+    }
+
+    // 2. Tomar el primer resultado
+    const team = search.data[0];
+    const teamId = team.id;
+
+    // 3. Obtener últimos 5 partidos
+    const lastMatches = await fetchLastMatches(teamId, null, null, 5);
+
+    // 4. Armar respuesta final
+    return res.json({
+      ok: true,
+      team: {
+        id: team.id,
+        name: team.name,
+        shortCode: team.short_code,
+        logo: team.image_path,
+        country: team.country?.name || null,
+        league: team.league?.name || null,
+      },
+      last5: lastMatches
+    });
+
+  } catch (e) {
+    return res.status(500).json({
+      ok: false,
+      error: e.message,
+      details: e.response?.data || null
+    });
+  }
+});
+
 app.get("/test", (req, res) => {
   return res.json({ received_api_key: API_KEY ? "SI" : "NO", api_key_preview: API_KEY ? (API_KEY.slice(0,4) + "") : null });
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
 
 
