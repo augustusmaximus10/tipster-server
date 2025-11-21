@@ -356,7 +356,7 @@ app.get("/team/:name", async (req, res) => {
     const teamName = req.params.name;
 
     // 1. Buscar equipo por nombre
-    const search = await apiFootball(/teams/search/${teamName});
+    const search = await apiFootball(`/teams/search/${teamName}`);
 
     if (!search.data || search.data.length === 0) {
       return res.status(404).json({ ok: false, message: "Equipo no encontrado" });
@@ -398,6 +398,7 @@ app.get("/test", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
 
 
 
