@@ -356,7 +356,7 @@ app.get("/team/:name", async (req, res) => {
     const name = req.params.name.toLowerCase();
 
     // 1. Descargar TODOS los equipos disponibles (FREE PLAN)
-    const teamsResponse = await apiFootball(/teams);
+    const teamsResponse = await apiFootball(`/teams`);
 
     if (!teamsResponse.data || teamsResponse.data.length === 0) {
       return res.status(404).json({ ok: false, message: "No hay equipos disponibles" });
@@ -405,6 +405,7 @@ app.get("/test", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
 
 
 
