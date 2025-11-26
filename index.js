@@ -349,36 +349,43 @@ app.get("/predict_full", async (req, res) => {
 });
 
 // ------------------------------------------------------
-// /team/:name — Buscar equipo por nombre + últimos 5 partidos (SPORTMONKS)
+// /team/:name — Búsqueda manual compatible con SportMonks Free
 // ------------------------------------------------------
 app.get("/team/:name", async (req, res) => {
   try {
-    const teamName = req.params.name;
+    const name = req.params.name.toLowerCase();
 
-    // 1. Buscar equipo con SportMonks
-    const search = await apiFootball(`/teams?search=${teamName}`);
+    // 1. Descargar TODOS los equipos disponibles (FREE PLAN)
+    const teamsResponse = await apiFootball(/teams);
 
-    if (!search.data || search.data.length === 0) {
-      return res.status(404).json({ ok: false, message: "Equipo no encontrado" });
+    if (!teamsResponse.data || teamsResponse.data.length === 0) {
+      return res.status(404).json({ ok: false, message: "No hay equipos disponibles" });
     }
 
-    // SportMonks regresa datos dentro de "data"
-    const team = search.data[0];
-    const teamId = team.id;
+    const teams = teamsResponse.data;
 
-    // 2. Obtener últimos 5 partidos
-    const lastMatches = await fetchLastMatches(teamId, null, null, 5);
+    // 2. Filtrar manualmente
+    const matches = teams.filter(t =>
+      t.name.toLowerCase().includes(name)
+    );
 
-    // 3. Respuesta final
+    if (matches.length === 0) {
+      return res.json({ ok: false, message: "Equipo no encontrado en tu plan gratuito" });
+    }
+
+    // 3. Tomar el primer equipo encontrado
+    const team = matches[0];
+
+    // 4. Obtener últimos 5 partidos
+    const lastMatches = await fetchLastMatches(team.id, null, null, 5);
+
     return res.json({
       ok: true,
       team: {
         id: team.id,
         name: team.name,
-        shortCode: team.short_code || null,
-        logo: team.logo_path || team.image_path || null,
-        country: team.country?.name || null,
-        league: team.league?.name || null,
+        shortCode: team.short_code,
+        logo: team.image_path
       },
       last5: lastMatches
     });
@@ -398,6 +405,7 @@ app.get("/test", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
 
 
 
