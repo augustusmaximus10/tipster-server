@@ -349,36 +349,36 @@ app.get("/predict_full", async (req, res) => {
 });
 
 // ------------------------------------------------------
-// /team/:name — Buscar equipo por nombre + últimos 5 partidos
+// /team/:name — Buscar equipo por nombre + últimos 5 partidos (SPORTMONKS)
 // ------------------------------------------------------
 app.get("/team/:name", async (req, res) => {
   try {
     const teamName = req.params.name;
 
-    // 1. Buscar equipo por nombre
-    const search = await apiFootball(`/teams/search/${teamName}`);
+    // 1. Buscar equipo con SportMonks
+    const search = await apiFootball(/teams?search=${teamName});
 
     if (!search.data || search.data.length === 0) {
       return res.status(404).json({ ok: false, message: "Equipo no encontrado" });
     }
 
-    // 2. Tomar el primer resultado
+    // SportMonks regresa datos dentro de "data"
     const team = search.data[0];
     const teamId = team.id;
 
-    // 3. Obtener últimos 5 partidos
+    // 2. Obtener últimos 5 partidos
     const lastMatches = await fetchLastMatches(teamId, null, null, 5);
 
-    // 4. Responder al cliente
+    // 3. Respuesta final
     return res.json({
       ok: true,
       team: {
         id: team.id,
         name: team.name,
-        shortCode: team.short_code, || null,
-        logo: team.image_path, || null,
+        shortCode: team.short_code || null,
+        logo: team.logo_path || team.image_path || null,
         country: team.country?.name || null,
-        league: team.league?.name || null
+        league: team.league?.name || null,
       },
       last5: lastMatches
     });
@@ -398,6 +398,7 @@ app.get("/test", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Servidor Tipster PRO corriendo en puerto " + PORT));
+
 
 
 
